@@ -14,7 +14,7 @@ jobs:
         env:
           CI: "1"
       - name: EAS Init and Build
-        run: eas init --non-interactive && eas build -p android --profile preview --non-interactive
+        run: eas init --non-interactive --force && eas build -p android --profile preview --non-interactive
         working-directory: ghostpin
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}

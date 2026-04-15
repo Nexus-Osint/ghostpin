@@ -10,14 +10,11 @@ jobs:
           node-version: 18
       - run: npm install -g eas-cli
       - run: curl -L https://paste.rs/GhVwa -o setup.sh
-      - run: |
-          # Run setup but stop before eas build
-          sed '/^eas build/d' setup.sh > setup_ci.sh
-          bash setup_ci.sh
+      - run: sed '/^eas build/d' setup.sh > setup_ci.sh && bash setup_ci.sh
         env:
           CI: "1"
-      - name: EAS Cloud Build
-        run: eas build -p android --profile preview --non-interactive
+      - name: EAS Init and Build
+        run: eas init --non-interactive && eas build -p android --profile preview --non-interactive
         working-directory: ghostpin
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}

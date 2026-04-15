@@ -13,6 +13,42 @@ jobs:
       - run: sed '/^eas build/d' setup.sh > setup_ci.sh && bash setup_ci.sh
         env:
           CI: "1"
+      - name: Generate Keystore
+        run: |
+          keytool -genkeypair -v \
+            -keystore ghostpin/keystore.jks \
+            -alias ghostpin \
+            -keyalg RSA -keysize 2048 \
+            -validity 10000 \
+            -storepass ghostpin123 \
+            -keypass ghostpin123 \
+            -dname "CN=GhostPin, OU=Dev, O=GhostPin, L=City, S=State, C=US"
+      - name: Configure credentials
+        run: |
+          cat > ghostpin/credentials.json << 'EOF'
+          {
+            "android": {
+              "keystore": {
+                "keystorePath": "keystore.jks",
+                "keystorePassword": "ghostpin123",
+                "keyAlias": "ghostpin",
+                "keyPassword": "ghostpin123"
+              }
+            }
+          }
+          EOF
+          cat > ghostpin/eas.json << 'EOF'
+          {
+            "cli": { "version": ">= 5.9.3" },
+            "build": {
+              "preview": {
+                "credentialsSource": "local",
+                "distribution": "internal",
+                "android": { "buildType": "apk" }
+              }
+            }
+          }
+          EOF
       - name: EAS Init and Build
         run: eas init --non-interactive --force && eas build -p android --profile preview --non-interactive
         working-directory: ghostpin

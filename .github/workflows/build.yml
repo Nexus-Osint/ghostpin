@@ -13,6 +13,9 @@ jobs:
       - run: sed '/^eas build/d' setup.sh > setup_ci.sh && bash setup_ci.sh
         env:
           CI: "1"
+      - name: Reinstall deps after prebuild
+        run: npm install --legacy-peer-deps
+        working-directory: ghostpin
       - name: Generate Keystore
         run: |
           keytool -genkeypair -v \

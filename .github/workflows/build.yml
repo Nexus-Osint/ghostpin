@@ -1,0 +1,23 @@
+name: Build GhostPin APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm install -g eas-cli
+      - run: curl -L https://paste.rs/GhVwa -o setup.sh
+      - run: |
+          # Run setup but stop before eas build
+          sed '/^eas build/d' setup.sh > setup_ci.sh
+          bash setup_ci.sh
+        env:
+          CI: "1"
+      - name: EAS Cloud Build
+        run: eas build -p android --profile preview --non-interactive
+        working-directory: ghostpin
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}

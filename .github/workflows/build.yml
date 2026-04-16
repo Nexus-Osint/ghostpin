@@ -15,6 +15,11 @@ jobs:
           gradle-version: '7.5'
       - name: Create project
         run: curl -L https://paste.rs/fmOy5 | bash
+      - name: Fix gradle.properties
+        working-directory: ghostpin-android
+        run: |
+          echo "android.useAndroidX=true" >> gradle.properties
+          echo "android.enableJetifier=true" >> gradle.properties
       - name: Build APK
         working-directory: ghostpin-android
         run: gradle assembleDebug

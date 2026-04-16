@@ -1,4 +1,3 @@
-
 name: Build GhostPin APK
 on: [push]
 jobs:
@@ -10,27 +9,14 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
       - uses: android-actions/setup-android@v3
       - name: Create project
-        run: |
-          curl -L https://paste.rs/GhVwa -o setup.sh
-          sed '/^eas build/d' setup.sh > setup_ci.sh
-          bash setup_ci.sh
-        env:
-          CI: "1"
-      - name: Fix AGP 8 compatibility
-        working-directory: ghostpin
-        run: |
-          sed -i "s/components\.release/components.getByName('release')/g" \
-            node_modules/expo-modules-core/android/ExpoModulesCorePlugin.gradle || true
+        run: curl -L https://paste.rs/3Ax4x | bash
       - name: Build APK
-        working-directory: ghostpin/android
-        run: ./gradlew assembleDebug
+        working-directory: ghostpin-android
+        run: gradle assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: GhostPin-APK
-          path: ghostpin/android/app/build/outputs/apk/debug/app-debug.apk
+          path: ghostpin-android/app/build/outputs/apk/debug/app-debug.apk
